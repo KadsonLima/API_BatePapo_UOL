@@ -33,29 +33,37 @@ server.post('/participants', (req, res)=>{
     
    let user = {name, lastStatus: Date.now()}
    db.collection("users").insertOne(user);
-   db.collection("msg").insertOne({name, to:'Todos', text:'entra na sala...', type:'status', time:horarioAgora()});
+   db.collection("msg").insertOne({from:name, to:'Todos', text:'entra na sala...', type:'status', time:horarioAgora()});
    res.status(201).send("OK");
    return;
-
+   
 })
 
-server.get('/participants', (req, res)=>{
-   db.collection("users").find().toArray().then(e =>{
-      res.send(e);
-   });
+server.get('/participants', async (req, res)=>{
+   try {
+      const result = await db.collection("users").find().toArray();
+      res.send(result);
+   } catch (error) {
+      log(error)
+   }
+   
+   
 })
 
-server.get('/messages', (req, res)=>{
-   db.collection("msg").find().toArray().then(e =>{
-      res.send(e);
-   });
+server.get('/messages', async(req, res)=>{
+   try {
+      const result = await db.collection("msg").find().toArray();
+      res.send(result);
+   } catch (error) {
+      log(error)
+   }
 })
 
 server.post('/messages', (req, res)=>{
    const {to, text ,type} = req.body
    const name = req.header('User')
    log(name)
-   db.collection("msg").insertOne({name, to, text, type, time:horarioAgora()});
+   db.collection("msg").insertOne({from:name, to, text, type, time:horarioAgora()});
 
 })
 
