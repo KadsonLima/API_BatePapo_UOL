@@ -54,8 +54,9 @@ server.get('/participants', async (req, res)=>{
 server.get('/messages', async(req, res)=>{
    try {
       const usuario = await req.headers.user;
+      const {limit} = req.query;
       const result = await db.collection("msg").find().toArray();
-      let mensagems = messagePrivate(result, usuario)
+      let mensagems = messagePrivate(result, usuario, limit)
       res.send(mensagems)
    } catch (error) {
       log(error)
@@ -69,6 +70,6 @@ server.post('/messages', (req, res)=>{
 
 })
 
-server.listen(5001, ()=>{
+server.listen(5000, ()=>{
    log( chalk.bold.yellow("Servidor Rodando!"));
 })

@@ -1,4 +1,4 @@
-function messagePrivate(mensagens, usuario){
+function messagePrivate(mensagens, usuario, limit){
 
     let mensagensFiltradas = [];
 
@@ -13,7 +13,13 @@ function messagePrivate(mensagens, usuario){
     }
     
 })
-return mensagensFiltradas;
+if(!limit){
+
+    return mensagensFiltradas;
+
+}else{
+    return mensagensFiltradas.slice(0, limit)
+}
 
 
 }
