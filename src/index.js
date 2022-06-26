@@ -5,6 +5,7 @@ import {MongoClient} from 'mongodb';
 import dotenv from 'dotenv';
 import {schema} from './schemas/joi.js';
 import {horarioAgora} from './utils/day.js';
+import {messagePrivate} from './utils/messagePrivate.js';
 
 
 dotenv.config();
@@ -52,21 +53,22 @@ server.get('/participants', async (req, res)=>{
 
 server.get('/messages', async(req, res)=>{
    try {
+      const usuario = await req.headers.user;
       const result = await db.collection("msg").find().toArray();
-      res.send(result);
+      let mensagems = messagePrivate(result, usuario)
+      res.send(mensagems)
    } catch (error) {
       log(error)
    }
 })
 
 server.post('/messages', (req, res)=>{
-   const {to, text ,type} = req.body
-   const name = req.header('User')
-   log(name)
+   const {to, text ,type} = req.body;
+   const name = req.header('User');
    db.collection("msg").insertOne({from:name, to, text, type, time:horarioAgora()});
 
 })
 
-server.listen(5000, ()=>{
+server.listen(5001, ()=>{
    log( chalk.bold.yellow("Servidor Rodando!"));
 })
