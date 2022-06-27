@@ -24,17 +24,22 @@ const server = express();
 server.use(cors(), express.json())
 
 
-server.post('/participants', (req, res) => {
+server.post('/participants', async (req, res) => {
    const { name } = req.body;
    const result = schema.validate(req.body);
-   if (result.error) {
+   const listaUsuarios = await db.collection("users").findOne({name:name});
+   if(listaUsuarios !== null){
+      res.status(404).send("Já EXISTE");
+      return;
+   }
+   if (result.error ) {
       res.status(422).send(result);
       return;
    }
 
    let user = { name, lastStatus: Date.now() }
-   db.collection("users").insertOne(user);
-   db.collection("msg").insertOne({ from: name, to: 'Todos', text: 'entra na sala...', type: 'status', time: horarioAgora() });
+   await db.collection("users").insertOne(user);
+   await db.collection("msg").insertOne({ from: name, to: 'Todos', text: 'entra na sala...', type: 'status', time: horarioAgora() });
    res.status(201).send("OK");
    return;
 
