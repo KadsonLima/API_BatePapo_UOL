@@ -13,12 +13,13 @@ function messagePrivate(mensagens, usuario, limit){
     }
     
 })
-if(!limit){
+if(!limit && limit == NaN){
 
     return mensagensFiltradas;
 
 }else{
-    return mensagensFiltradas.slice(0, limit)
+    
+    return mensagensFiltradas.slice(-limit)
 }
 
 
